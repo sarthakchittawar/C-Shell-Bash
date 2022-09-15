@@ -60,7 +60,7 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
         else if (i != c - 1 && strcmp(arr[i], ">") == 0)
         {
             outflag = 1;
-            dup2(STDOUT_FILENO, out_backup);
+            out_backup = dup(STDOUT_FILENO);
             if ((fp = fopen(arr[i + 1], "w")) != NULL)
             {
                 dup2(fileno(fp), STDOUT_FILENO);
@@ -82,7 +82,7 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
         else if (i != c - 1 && strcmp(arr[i], ">>") == 0)
         {
             outflag = 2;
-            dup2(STDOUT_FILENO, out_backup);
+            out_backup = dup(STDOUT_FILENO);
             if ((fp = fopen(arr[i + 1], "a")) != NULL)
             {
                 dup2(fileno(fp), STDOUT_FILENO);
