@@ -23,6 +23,7 @@
 #include "others.h"
 #include "jobs.h"
 #include "sig.h"
+#include "bg.h"
 
 #define MAX 1000
 
@@ -265,6 +266,17 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
     else if (strcmp(arr[0], "sig") == 0)
     {
         if (sig(arr, c) == 0)
+        {
+            free(arr);
+            dup2(in_backup, STDIN_FILENO);
+            dup2(out_backup, STDOUT_FILENO);
+            return 0;
+        }
+        free(arr);
+    }
+    else if (strcmp(arr[0], "bg") == 0)
+    {
+        if (bg(arr, c) == 0)
         {
             free(arr);
             dup2(in_backup, STDIN_FILENO);

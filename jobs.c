@@ -62,6 +62,10 @@ int jobs(int bgcount, char **bg_procname, int bg_bitmaps[], char **arr, int c)
                     {
                         bg_bitmaps[i] = 0;
                     }
+                    else
+                    {
+                        bg_bitmaps[i] = 1;
+                    }
                 }
                 fclose(proc);
             }

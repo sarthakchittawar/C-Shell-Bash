@@ -91,9 +91,5 @@ void handler(int signum)
         }
         strcat(bg_buffer, str);
     }
-    else
-    {
-        perror("PID cannot be <=0");
-    }
     return;
 }
