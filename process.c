@@ -21,10 +21,11 @@
 #include "pinfo.h"
 #include "discover.h"
 #include "others.h"
+#include "jobs.h"
 
 #define MAX 1000
 
-int process(char *process_name, int andflag, char *dir, char *curr_dir, char *init_dir, char *prev_dir, char *username, int *timeflag, char *prompt, char **hist, int histno, int *bgcount, int bg_processes[], double *bef, double *en)
+int process(char *process_name, int andflag, char *dir, char *curr_dir, char *init_dir, char *prev_dir, char *username, int *timeflag, char *prompt, char **hist, int histno, int *bgcount, int bg_processes[], char **bg_procname, int bg_bitmaps[], double *bef, double *en)
 {
     char prname[MAX];
     strcpy(prname, process_name);
@@ -139,39 +140,43 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
         tok = strtok(NULL, "\t ");
     }
 
-    // to reset bgcount
-    if (andflag == 0)
-    {
-        int flag = 0;
-        for (int i = 0; i < *bgcount; i++)
-        {
-            char file[MAX] = "/proc/";
-            char buffer[MAX];
-            sprintf(buffer, "%d", bg_processes[i]);
-            strcat(file, buffer);
-            strcat(file, "/stat");
-            FILE *proc = fopen(file, "r");
-            char status;
-            long unsigned int memory;
-            int fg;
-            if (proc != NULL)
-            {
-                if (fscanf(proc, "%*d %*s %c", &status))
-                {
-                    if (status == 'R')
-                    {
-                        flag = 1;
-                        break;
-                    }
-                }
-            }
-            fclose(proc);
-        }
-        if (flag == 0 && strcmp(arr[0], "pinfo") != 0) // exception
-        {
-            (*bgcount) = 0;
-        }
-    }
+    // to reset bgcount -- for now i am never resetting
+    // if (andflag == 0)
+    // {
+    //     int flag = 0;
+    //     for (int i = 0; i < *bgcount; i++)
+    //     {
+    //         char file[MAX] = "/proc/";
+    //         char buffer[MAX];
+    //         sprintf(buffer, "%d", bg_processes[i]);
+    //         strcat(file, buffer);
+    //         strcat(file, "/stat");
+    //         FILE *proc = fopen(file, "r");
+    //         char status;
+    //         long unsigned int memory;
+    //         int fg;
+    //         if (proc != NULL)
+    //         {
+    //             if (fscanf(proc, "%*d %*s %c", &status))
+    //             {
+    //                 if (status == 'R')
+    //                 {
+    //                     flag = 1;
+    //                     break;
+    //                 }
+    //             }
+    //             fclose(proc);
+    //         }
+    //     }
+    //     if (flag == 0 && strcmp(arr[0], "pinfo") != 0 && strcmp(arr[0], "jobs") != 0) // exception
+    //     {
+    //         for (int i = 0; i < *bgcount; i++)
+    //         {
+    //             bg_bitmaps[i] = 0;
+    //         }
+    //         (*bgcount) = 0;
+    //     }
+    // }
 
     // if (inflag != 0 && outflag != 0)
     // {
@@ -245,6 +250,17 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
         }
         free(arr);
     }
+    else if (strcmp(arr[0], "jobs") == 0)
+    {
+        if (jobs(*bgcount, bg_procname, bg_bitmaps, arr, c) == 0)
+        {
+            free(arr);
+            dup2(in_backup, STDIN_FILENO);
+            dup2(out_backup, STDOUT_FILENO);
+            return 0;
+        }
+        free(arr);
+    }
     else if (strcmp(arr[0], "exit") == 0)
     {
         free(arr);
@@ -252,7 +268,7 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
     }
     else
     {
-        others(arr, c, process_name, andflag, dir, curr_dir, init_dir, prev_dir, username, timeflag, prompt, hist, histno, bgcount, bg_processes, bef, en);
+        others(arr, c, process_name, andflag, dir, curr_dir, init_dir, prev_dir, username, timeflag, prompt, hist, histno, bgcount, bg_processes, bg_procname, bg_bitmaps, bef, en);
         free(arr);
     }
     dup2(in_backup, STDIN_FILENO);

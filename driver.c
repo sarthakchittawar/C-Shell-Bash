@@ -36,11 +36,20 @@ extern int errno;
 char prev_dir[MAX];
 int bgcount = 0;
 int bg_processes[100000];
+int bg_bitmaps[100000];
 char bg_buffer[MAX];
 int andflag;
+int handlerflag = 0;
+char **bg_procname;
 
 int main()
 {
+    bg_procname = (char **)malloc(MAX * __SIZEOF_POINTER__);
+    for (int i = 0; i < 100000; i++)
+    {
+        bg_bitmaps[i] = 0;
+    }
+
     FILE *histfile = fopen(".history", "r");
     if (histfile == NULL)
     {
@@ -151,6 +160,7 @@ int main()
                 break;
             }
             int andcount = 0;
+            int pipecount = 0;
 
             for (int i = 0; i < strlen(arr[d]); i++)
             {
@@ -158,39 +168,67 @@ int main()
                 {
                     andcount++;
                 }
+                else if (arr[d][i] == '|')
+                {
+                    pipecount++;
+                }
             }
-
-            char *token2 = strtok(arr[d], "&");
-            char **arr2 = (char **)malloc(MAX * __SIZEOF_POINTER__);
-            int a = 0;
-            while (token2 != NULL)
+            char **arr1 = (char **)malloc(MAX * __SIZEOF_POINTER__);
+            char *token1 = strtok(arr[d], "|");
+            int e = 0;
+            while (token1 != NULL)
             {
-                arr2[a] = token2;
-                a++;
-                token2 = strtok(NULL, "&");
+                trim(token1);
+                arr1[e] = token1;
+                e++;
+                token1 = strtok(NULL, "|");
             }
-            int b = 0;
-            andflag = 0;
-            while (b < a)
+            for (int f = 0; f < e; f++)
             {
-                trim(arr2[b]);
+                char *token2 = strtok(arr1[f], "&");
+                char **arr2 = (char **)malloc(MAX * __SIZEOF_POINTER__);
+                int a = 0;
+                while (token2 != NULL)
+                {
+                    arr2[a] = token2;
+                    a++;
+                    token2 = strtok(NULL, "&");
+                }
+                int b = 0;
+                andflag = 0;
+                while (b < a)
+                {
+                    trim(arr2[b]);
 
-                if (strcmp(arr2[b], "") == 0)
-                {
-                    break;
-                }
-                if (b < andcount)
-                {
-                    andflag = 1;
-                }
-                else
-                {
-                    andflag = 0;
-                }
+                    if (strcmp(arr2[b], "") == 0)
+                    {
+                        break;
+                    }
+                    if (b < andcount)
+                    {
+                        andflag = 1;
+                    }
+                    else
+                    {
+                        andflag = 0;
+                    }
 
-                process(arr2[b], andflag, dir, curr_dir, init_dir, prev_dir, username, &timeflag, prompt, history, histno, &bgcount, bg_processes, &bef, &en);
-                b++;
+                    process(arr2[b], andflag, dir, curr_dir, init_dir, prev_dir, username, &timeflag, prompt, history, histno, &bgcount, bg_processes, bg_procname, bg_bitmaps, &bef, &en);
+                    b++;
+                }
+                // pipelining
+                if (f != e - 1)
+                {
+                    int filedes[2];
+                    if (pipe(filedes) < 0)
+                    {
+                        perror("Could not pipe correctly");
+                        return 0;
+                    }
+                }
             }
+            // int w = 0;
+            // wait(&w);
 
             d++;
         }

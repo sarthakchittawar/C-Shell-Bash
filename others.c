@@ -17,7 +17,7 @@
 
 #define MAX 1000
 
-void others(char **arr, int c, char *process_name, int andflag, char *dir, char *curr_dir, char *init_dir, char *prev_dir, char *username, int *timeflag, char *prompt, char **hist, int histno, int *bgcount, int bg_processes[], double *bef, double *en)
+void others(char **arr, int c, char *process_name, int andflag, char *dir, char *curr_dir, char *init_dir, char *prev_dir, char *username, int *timeflag, char *prompt, char **hist, int histno, int *bgcount, int bg_processes[], char **bg_procname, int bg_bitmaps[], double *bef, double *en)
 {
     if (andflag == 0)
     {
@@ -28,13 +28,13 @@ void others(char **arr, int c, char *process_name, int andflag, char *dir, char 
 
         pid = fork();
         if (pid == 0)
+        {
+            arr[c] = NULL;
+            if (execvp(arr[0], arr) < 0)
             {
-                arr[c] = NULL;
-                if (execvp(arr[0], arr) < 0)
-                {
-                    perror("Invalid command/ not coded yet");
-                }
+                perror("Invalid command/ not coded yet");
             }
+        }
         else
         {
             wait(&pid);
@@ -64,6 +64,16 @@ void others(char **arr, int c, char *process_name, int andflag, char *dir, char 
         {
             bg_processes[*bgcount] = pid;
             printf("[%d] %d\n", (*bgcount) + 1, pid);
+            bg_procname[*bgcount] = (char *)malloc(sizeof(char *));
+            char procname[MAX] = "";
+            for(int i=0; i<c; i++)
+            {
+                strcat(procname, arr[i]);
+                strcat(procname, " ");
+            }
+            trim(procname);
+            strcpy(bg_procname[*bgcount], procname);
+            bg_bitmaps[*bgcount] = 1;
 
             (*bgcount)++;
         }
