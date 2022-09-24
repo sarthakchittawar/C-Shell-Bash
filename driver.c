@@ -50,6 +50,7 @@ int main()
     for (int i = 0; i < 100000; i++)
     {
         bg_bitmaps[i] = 0;
+        bg_processes[i] = -1;
     }
 
     FILE *histfile = fopen(".history", "r");
