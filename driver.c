@@ -127,7 +127,7 @@ int main()
         char text[MAX];
         memset(text, '\0', MAX);
 
-        take_input(text);
+        take_input(text, prompt, dir);
         if (add_hist(&histno, text, history) == 0)
         {
             continue;
@@ -224,6 +224,27 @@ int main()
                     {
                         perror("Could not pipe correctly");
                         return 0;
+                    }
+                    int pid = fork();
+                    if (pid < 0)
+                    {
+                        perror("Invalid process ID created");
+                        return 0;
+                    }
+
+                    if (pid == 0)
+                    {
+                        // read
+                        close(filedes[1]);
+                        char buf[MAX];
+                        read(filedes[0], buf, MAX);
+                        close(filedes[0]);
+                    }
+                    else
+                    {
+                        // write
+                        close(filedes[0]);
+                        
                     }
                 }
             }

@@ -3,6 +3,6 @@
 #ifndef TAKE_INPUT
 #define TAKE_INPUT
 
-int take_input(char text[MAX]);
+int take_input(char text[MAX], char *prompt, char *dir);
 
 #endif
