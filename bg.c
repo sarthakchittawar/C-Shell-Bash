@@ -16,7 +16,7 @@ int bg(char **arr, int c)
     int pid = bg_processes[index];
     if (pid < 0)
     {
-        perror("Process with given job number has already terminated");
+        perror("Process with given job number does not exist or has already terminated");
         return 0;
     }
 
