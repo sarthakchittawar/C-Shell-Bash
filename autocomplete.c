@@ -67,7 +67,29 @@ int autocomplete(char text[], int *length, char *prompt, char *dir)
                 }
                 printf("\n");
             }
-            // prompt again
+            // find longest common prefix
+            int l = 0;
+            for (int i = 0; i < strlen(autofill[0]->d_name); i++)
+            {
+                int flag = 0;
+                for (int j = 0; j < count - 1; j++)
+                {
+                    if (strncmp(autofill[j]->d_name, autofill[j + 1]->d_name, i + 1) == 0)
+                    {
+                        l++;
+                    }
+                    else
+                    {
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag == 1)
+                {
+                    break;
+                }
+            }
+            //  prompt again
             printf("\033[1;32m");
             printf("%s", prompt);
             printf("\033[1;37m");
@@ -76,6 +98,17 @@ int autocomplete(char text[], int *length, char *prompt, char *dir)
             printf("%s> ", dir);
             printf("\033[0;37m");
             printf("%s", text);
+
+            if (l > 0)
+            {
+                char buf[MAX];
+                memset(buf, '\0', MAX);
+                int len = strlen(token);
+                strncpy(buf, &(autofill[0]->d_name)[len], l - len);
+                strcat(text, buf);
+                printf("%s", buf);
+                *length = strlen(text);
+            }
         }
     }
 }

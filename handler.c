@@ -19,6 +19,7 @@
 
 extern int bgcount;
 extern int bg_processes[100000];
+extern char **bg_procname;
 extern int bg_bitmaps[100000];
 extern char bg_buffer[MAX];
 extern int andflag;
@@ -70,7 +71,10 @@ void handler(int signum)
     if (pid > 0)
     {
         char str[MAX];
-        sprintf(str, "\r[%d] with pid %d exited", num, pid);
+        char str2[MAX];
+        strcpy(str2, bg_procname[num - 1]);
+        strtok(str2, " ");
+        sprintf(str, "\r[%d] %s with pid %d exited", num, str2, pid);
         strcat(bg_buffer, str);
 
         int exit;
