@@ -25,10 +25,6 @@ extern int andflag;
 
 void handler(int signum)
 {
-    // if (andflag == 0)
-    // {
-    //     return;
-    // }
     int status;
     int pid = waitpid(-1, &status, WNOHANG);
 

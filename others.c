@@ -17,6 +17,8 @@
 
 #define MAX 1000
 
+extern int fg_pid;
+
 void others(char **arr, int c, char *process_name, int andflag, char *dir, char *curr_dir, char *init_dir, char *prev_dir, char *username, int *timeflag, char *prompt, char **hist, int histno, int *bgcount, int bg_processes[], char **bg_procname, int bg_bitmaps[], double *bef, double *en)
 {
     if (andflag == 0)
@@ -37,7 +39,9 @@ void others(char **arr, int c, char *process_name, int andflag, char *dir, char 
         }
         else
         {
+            fg_pid = pid;
             wait(&pid);
+            fg_pid = -1;
         }
         gettimeofday(&end, NULL);
         (*bef) = begin.tv_sec + begin.tv_usec / (double)1000000;
@@ -62,6 +66,7 @@ void others(char **arr, int c, char *process_name, int andflag, char *dir, char 
         }
         else
         {
+            setpgid(pid, 0);    // helps in ctrl-c
             bg_processes[*bgcount] = pid;
             printf("[%d] %d\n", (*bgcount) + 1, pid);
             bg_procname[*bgcount] = (char *)malloc(sizeof(char *));

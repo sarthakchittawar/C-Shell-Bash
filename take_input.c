@@ -3,12 +3,15 @@
 #include <termios.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <signal.h>
 
 #include "autocomplete.h"
 
 #define MAX 1000
 
 struct termios orig_termios;
+extern int bg_processes[100000];
+extern int bgcount;
 
 void die(const char *s)
 {
@@ -63,8 +66,19 @@ int take_input(char text[MAX], char *prompt, char *dir)
                     {
                         i--;
                         text[i] = '\0';
-                        printf("\b \b");    // moves cursor, adds space, and moves it back again
+                        printf("\b \b"); // moves cursor, adds space, and moves it back again
                     }
+                }
+                else if (c == 4) // ctrl-d
+                {
+                    for (int j = 0; j < bgcount; j++)
+                    {
+                        if (bg_processes[j] != -1)
+                        {
+                            kill(bg_processes[j], SIGINT);
+                        }
+                    }
+                    exit(0);
                 }
             }
             else

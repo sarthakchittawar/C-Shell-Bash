@@ -28,6 +28,7 @@
 #include "others.h"
 #include "process.h"
 #include "take_input.h"
+#include "ctrl.h"
 
 #define MAX 1000
 
@@ -36,6 +37,7 @@ extern int errno;
 char prev_dir[MAX];
 int bgcount = 0;
 int bg_processes[100000];
+int fg_pid = -1;
 int bg_bitmaps[100000];
 char bg_buffer[MAX];
 int andflag;
@@ -98,6 +100,7 @@ int main()
     }
 
     signal(SIGCHLD, handler);
+    signal(SIGINT, ctrlc);
 
     while (1)
     {
