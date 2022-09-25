@@ -74,11 +74,7 @@ int autocomplete(char text[], int *length, char *prompt, char *dir)
                 int flag = 0;
                 for (int j = 0; j < count - 1; j++)
                 {
-                    if (strncmp(autofill[j]->d_name, autofill[j + 1]->d_name, i + 1) == 0)
-                    {
-                        l++;
-                    }
-                    else
+                    if (strncmp(autofill[j]->d_name, autofill[j + 1]->d_name, i + 1) != 0)
                     {
                         flag = 1;
                         break;
@@ -88,6 +84,7 @@ int autocomplete(char text[], int *length, char *prompt, char *dir)
                 {
                     break;
                 }
+                l++;
             }
             //  prompt again
             printf("\033[1;32m");

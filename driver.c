@@ -187,8 +187,28 @@ int main()
                 e++;
                 token1 = strtok(NULL, "|");
             }
+            // pipelining
+            int filedes[e][2];
             for (int f = 0; f < e; f++)
             {
+                int in_backup = dup(STDIN_FILENO);
+                int out_backup = dup(STDOUT_FILENO);
+                if (f != 0)
+                {
+                    dup2(filedes[f - 1][0], STDIN_FILENO);
+                    close(filedes[f - 1][0]);
+                }
+                if (f != e - 1)
+                {
+                    if (pipe(filedes[f]) < 0)
+                    {
+                        perror("Unable to pipe");
+                        return 0;
+                    }
+                    dup2(filedes[f][1], STDOUT_FILENO);
+                    close(filedes[f][1]);
+                }
+
                 char *token2 = strtok(arr1[f], "&");
                 char **arr2 = (char **)malloc(MAX * __SIZEOF_POINTER__);
                 int a = 0;
@@ -220,41 +240,11 @@ int main()
                     process(arr2[b], andflag, dir, curr_dir, init_dir, prev_dir, username, &timeflag, prompt, history, histno, &bgcount, bg_processes, bg_procname, bg_bitmaps, &bef, &en);
                     b++;
                 }
-                // pipelining
-                if (f != e - 1)
-                {
-                    int filedes[2];
-                    if (pipe(filedes) < 0)
-                    {
-                        perror("Could not pipe correctly");
-                        return 0;
-                    }
-                    int pid = fork();
-                    if (pid < 0)
-                    {
-                        perror("Invalid process ID created");
-                        return 0;
-                    }
-
-                    if (pid == 0)
-                    {
-                        // read
-                        close(filedes[1]);
-                        char buf[MAX];
-                        read(filedes[0], buf, MAX);
-                        close(filedes[0]);
-                    }
-                    else
-                    {
-                        // write
-                        close(filedes[0]);
-                        
-                    }
-                }
+                dup2(in_backup, STDIN_FILENO);
+                close(in_backup);
+                dup2(out_backup, STDOUT_FILENO);
+                close(out_backup);
             }
-            // int w = 0;
-            // wait(&w);
-
             d++;
         }
         free(arr);
