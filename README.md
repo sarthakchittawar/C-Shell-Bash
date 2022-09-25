@@ -39,3 +39,4 @@ Run `make all`, then `./a.out` on the folder where file is downloaded
 5. *History file may get corrupted after tremendous usage, and a prompt will be displayed when this happens*
 6. *Most functions in this project have been made acc to my own shell's behaviour, i.e. bash*
 7. *Autocomplete will not search only for directories during a `cd` command, as we have not been asked to make it command-specific*
+8. *In Autocompletion, if I just press tab before anything else, my functionality does not work. However, it does work when i do gdb, but not on terminal. So I wasn't able to implement this particular thing*
