@@ -36,6 +36,7 @@ extern int errno;
 
 char prev_dir[MAX];
 int bgcount = 0;
+int *bgno = &bgcount;
 int bg_processes[100000];
 int fg_pid = -1;
 int bg_bitmaps[100000];
@@ -43,9 +44,11 @@ char bg_buffer[MAX];
 int andflag;
 int handlerflag = 0;
 char **bg_procname;
+char *fgname;
 
 int main()
 {
+    fgname = (char *)malloc(sizeof(char *));
     bg_procname = (char **)malloc(MAX * __SIZEOF_POINTER__);
     for (int i = 0; i < 100000; i++)
     {
@@ -102,6 +105,7 @@ int main()
 
     signal(SIGCHLD, handler);
     signal(SIGINT, ctrlc);
+    signal(SIGTSTP, ctrlz);
 
     while (1)
     {

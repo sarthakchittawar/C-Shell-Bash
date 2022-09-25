@@ -3,9 +3,12 @@
 #include <signal.h>
 #include <unistd.h>
 
+#define MAX 1000
+
 extern int bg_processes[100000];
 extern char **bg_procname;
 extern int fg_pid;
+extern char *fgname;
 
 int fg(char **arr, int c, int *timeflag, double *bef, double *en)
 {
@@ -29,9 +32,15 @@ int fg(char **arr, int c, int *timeflag, double *bef, double *en)
     struct timeval begin, end;
 
     gettimeofday(&begin, NULL);
-    
+
     fg_pid = pid;
-    wait(&pid);
+    char procname[MAX] = "";
+    trim(procname);
+    if (strcmp(arr[0], "fg") != 0)
+    {
+        strcpy(fgname, procname);
+    }
+    waitpid(pid, NULL, WUNTRACED);
     fg_pid = -1;
 
     gettimeofday(&end, NULL);

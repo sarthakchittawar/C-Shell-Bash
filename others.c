@@ -18,6 +18,7 @@
 #define MAX 1000
 
 extern int fg_pid;
+extern char *fgname;
 
 void others(char **arr, int c, char *process_name, int andflag, char *dir, char *curr_dir, char *init_dir, char *prev_dir, char *username, int *timeflag, char *prompt, char **hist, int histno, int *bgcount, int bg_processes[], char **bg_procname, int bg_bitmaps[], double *bef, double *en)
 {
@@ -40,7 +41,15 @@ void others(char **arr, int c, char *process_name, int andflag, char *dir, char 
         else
         {
             fg_pid = pid;
-            wait(&pid);
+            char procname[MAX] = "";
+            for(int i=0; i<c; i++)
+            {
+                strcat(procname, arr[i]);
+                strcat(procname, " ");
+            }
+            trim(procname);
+            strcpy(fgname, procname);
+            waitpid(pid, NULL, WUNTRACED);
             fg_pid = -1;
         }
         gettimeofday(&end, NULL);
