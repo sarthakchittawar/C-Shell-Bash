@@ -207,7 +207,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "ls") == 0)
     {
@@ -218,7 +217,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "history") == 0)
     {
@@ -229,7 +227,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "pinfo") == 0)
     {
@@ -240,7 +237,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "discover") == 0)
     {
@@ -251,7 +247,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "jobs") == 0)
     {
@@ -262,7 +257,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "sig") == 0)
     {
@@ -273,7 +267,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "fg") == 0)
     {
@@ -284,7 +277,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "bg") == 0)
     {
@@ -295,7 +287,6 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
             dup2(out_backup, STDOUT_FILENO);
             return 0;
         }
-        free(arr);
     }
     else if (strcmp(arr[0], "exit") == 0)
     {
@@ -305,10 +296,10 @@ int process(char *process_name, int andflag, char *dir, char *curr_dir, char *in
     else
     {
         others(arr, c, process_name, andflag, dir, curr_dir, init_dir, prev_dir, username, timeflag, prompt, hist, histno, bgcount, bg_processes, bg_procname, bg_bitmaps, bef, en);
-        free(arr);
     }
     dup2(in_backup, STDIN_FILENO);
     dup2(out_backup, STDOUT_FILENO);
 
+    free(arr);
     return 1;
 }

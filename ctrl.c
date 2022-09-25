@@ -49,5 +49,6 @@ void ctrlz(int signum)
         strncpy(bg_procname[*bgno], &fg[1], strlen(fg) - 2);
         bg_bitmaps[*bgno] = 0;
         (*bgno)++;
+        free(fg);
     }
 }

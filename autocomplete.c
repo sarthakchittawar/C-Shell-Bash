@@ -28,7 +28,10 @@ int autocomplete(char text[], int *length, char *prompt, char *dir)
         struct dirent **autofill = (struct dirent **)malloc(MAX * sizeof(struct dirent **));
         for (int i = 0; i < num; i++)
         {
-            if (strncmp(token, array[i]->d_name, strlen(token)) == 0)
+            char lol[MAX];
+            strcpy(lol, token);
+            strtok(lol, " ");
+            if (lol == NULL || strncmp(token, array[i]->d_name, strlen(token)) == 0)
             {
                 autofill[count] = array[i];
 
@@ -107,5 +110,6 @@ int autocomplete(char text[], int *length, char *prompt, char *dir)
                 *length = strlen(text);
             }
         }
+        free(autofill);
     }
 }

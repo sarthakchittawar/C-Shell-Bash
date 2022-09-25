@@ -260,6 +260,8 @@ int main()
         memset(bg_buffer, '\0', MAX);
     }
     fclose(fp);
+    free(fgname);
+    free(bg_procname);
 
     return 0;
 }
